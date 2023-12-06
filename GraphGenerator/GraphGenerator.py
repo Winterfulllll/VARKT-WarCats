@@ -25,7 +25,7 @@
 import matplotlib.pyplot as plt
 
 # Вставить сюда название файла, записанного с помощью MechJeb2 (KSP mod):
-file = open("Muna1.csv")
+file = open("../Files/data/Muna1.csv")
 
 parameters = file.readline().rstrip("\n").split(",")
 parameters_count = len(parameters)
