@@ -3,15 +3,28 @@ PRINT "Запущена программа посадки...".
 UNLOCK STEERING.
 wait 1.
 SAS ON.
-SET SASMODE TO "RETROGRADE".
 wait 1.
 SET SASMODE TO "RETROGRADE".
-SET SASMODE TO "RETROGRADE".
-SET SASMODE TO "RETROGRADE".
+wait 1.
+rcs on.
 WAIT UNTIL SHIP:OBT:BODY = BODY("Mun").
 LEGS ON.
-WAIT UNTIL ship:altitude < 2000000.
+WAIT UNTIL ship:altitude < 100000.
+// Гасим горизонтальную скорость
+SET SASMODE TO "RADIALIN".
+wait 2.
 
+if abs(ship:groundspeed) > 15
+{
+lock throttle to 1.
+wait until abs(ship:groundspeed) < 15.
+lock throttle to 0.
+wait 1.
+}
+
+// Начинаем включать двигатели на нужной высоте
+SET SASMODE TO "RETROGRADE".
+wait 1.
 set H0 to 50000.
 set errh to SuicideBurn(H0).
 // Ожидаем пока погрешность будет меньше 10
@@ -38,7 +51,7 @@ UNTIL FALSE
     SET Thr0 TO gg * SHIP:MASS.
     LOCK THROTTLE TO Thr0 / SHIP:MAXTHRUST.
     WAIT 0.001.
-    IF SHIP:BOUNDS:BOTTOMALTRADAR < 100
+    IF SHIP:BOUNDS:BOTTOMALTRADAR < 70
     {
         break.
     }
@@ -53,7 +66,7 @@ UNTIL FALSE
     SET Thr0 TO gg * SHIP:MASS.
     LOCK THROTTLE TO Thr0 / SHIP:MAXTHRUST.
     WAIT 0.001.
-    IF SHIP:BOUNDS:BOTTOMALTRADAR < 2
+    IF SHIP:BOUNDS:BOTTOMALTRADAR < 1
     {
         break.
     }
@@ -62,6 +75,7 @@ UNTIL FALSE
 lock throttle to 0.
 wait 20.
 SAS OFF.
+rcs off.
 print "The end!".
 // Функция, считающая высоту полного загашения скорости, если включить полную тягу на высоте h
 function SuicideBurn {
@@ -79,7 +93,7 @@ function SuicideBurn {
     wait 3.
     until VertSpeed > 0
     {
-        set t to t + dt.  // Время хуле
+        set t to t + dt.  // Время
         set A to (Thr / (M0 - Mr * t)).  // Ускорение
         set g to -mun:mu / (mun:radius + h) ^ 2.  // Ускорение св падения на нашей высоте
         set VertSpeed to VertSpeed + (A + g) * dt.  // Скорость
