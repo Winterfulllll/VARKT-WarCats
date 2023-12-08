@@ -1,4 +1,4 @@
-# GraphGenerator by WarCats (Version 1.0.0)
+# GraphGenerator by WarCats (Version 1.0.1) for .csv files
 
 # Параметры, читаемые из файла:
 
@@ -20,19 +20,20 @@
 # 16) DragLosses (Потери сопротивления)
 # 17) SteeringLosses (Потери управления)
 # 18) DeltaVExpended (Delta-V)
+
 # (X) - подразумевает, что данный параметр не будет использован
 
 import matplotlib.pyplot as plt
 
 # Вставить сюда название файла, записанного с помощью MechJeb2 (KSP mod):
-file = open("../Files/data/Muna1.csv")
+file = open("../data/final.csv")
 
 parameters = file.readline().rstrip("\n").split(",")
 parameters_count = len(parameters)
 data = {parameter: [] for parameter in parameters}
 
 parameters_rus = [ ("Время", 0), 
-        ("Скорость относительно Земли", 4),
+        ("Вертикальная скорость", 4),
         ("Орбитальная скорость", 5),
         ("Масса", 6),
         ("Ускорение", 7),
@@ -48,6 +49,7 @@ for line in file:
     values = line.rstrip("\n").split(",")
     for i in range(parameters_count):
         data[parameters[i]].append(float(values[i]))
+file.close()
 
 # Ввод пользователем значений для построения графика
 print(f'ВЫБЕРИТЕ 2 ПАРАМЕТРА ИЗ ПРИВЕДЕННЫХ НИЖЕ, ЧТОБЫ ПОСТРОИТЬ ГРАФИК:\n')
@@ -57,8 +59,8 @@ for i in range(parameters_rus_count):
     print(f'{i + 1}) {parameters_rus[i][0]}')
 print()
 
-parameter1 = int(input("ВВЕДИТЕ ПОРЯДКОВЫЙ НОМЕР ПЕРВОГО ПАРАМЕТР: ")) - 1
-parameter2 = int(input("ВВЕДИТЕ ПОРЯДКОВЫЙ НОМЕР ВТОРОГО ПАРАМЕТР: ")) - 1
+parameter2 = int(input("ВВЕДИТЕ ПОРЯДКОВЫЙ НОМЕР ЗАВИСИМОГО ПАРАМЕТР: ")) - 1
+parameter1 = int(input("ВВЕДИТЕ ПОРЯДКОВЫЙ НОМЕР НЕЗАВИСИМОГО ПАРАМЕТР: ")) - 1
 if (parameter1 <= -1) or (parameter1 >= parameters_rus_count) or \
     (parameter2 <= -1) or (parameter2 >= parameters_rus_count):
     raise ValueError("Incorrect parameters has been entered")
@@ -76,4 +78,4 @@ plt.xlabel(parameters_rus[parameter1][0])
 plt.ylabel(parameters_rus[parameter2][0])
 
 # Сохранение графика
-plt.savefig('graphic.png')
+plt.savefig('../pictures/KSP_Graphic.png')
